@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from django.utils import timezone
 
-from core.registry import accion
 from core.services import CrudService
 
 from .models import Evento
@@ -34,18 +33,3 @@ class EventoService(CrudService):
             for e in candidatos
             if e.inicio - timedelta(minutes=e.recordar_minutos_antes) <= ahora
         ]
-
-
-@accion("agenda.crear_evento", "Crea un evento en el calendario")
-def crear_evento(usuario, **datos):
-    return EventoService.crear(usuario, **datos)
-
-
-@accion("agenda.mover_evento", "Mueve un evento a otra fecha/hora")
-def mover_evento(usuario, pk, nuevo_inicio):
-    return EventoService.mover(usuario, pk, nuevo_inicio)
-
-
-@accion("agenda.eliminar_evento", "Elimina un evento")
-def eliminar_evento(usuario, pk):
-    return EventoService.eliminar(usuario, pk)

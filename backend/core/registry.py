@@ -1,16 +1,23 @@
-"""Registro de acciones expuestas a la IA.
+"""Registro de acciones (herramientas) que el agente de IA puede usar.
 
-Cada función de la app que el asistente (chat/voz) podrá invocar se registra
-con @accion. Hoy solo es un catálogo; cuando se agregue el agente, este
-registro se convertirá en sus "tools" sin tocar los módulos de negocio.
+Cada acción declara:
+- `parametros`: esquema JSON de sus argumentos (lo recibe el modelo).
+- `escribe`: True si crea, edita o elimina datos. El agente NUNCA ejecuta estas por sí
+  solo: se guardan como "acción pendiente" y solo corren cuando el usuario confirma.
+- `preparar(usuario, argumentos) -> (argumentos_normalizados, resumen)`: valida los
+  argumentos del modelo (son datos NO confiables), resuelve referencias (cuenta por
+  nombre, etc.) y devuelve un resumen legible para pedir confirmación.
 
-    @accion("finanzas.crear_movimiento", "Registra un ingreso o gasto")
+    @accion("finanzas.crear_movimiento", "Registra un gasto o ingreso",
+            parametros={...}, escribe=True, preparar=_preparar)
     def crear_movimiento(usuario, **datos): ...
 """
-from dataclasses import dataclass
-from typing import Callable
+from dataclasses import dataclass, field
+from typing import Callable, Optional
 
 ACCIONES: dict[str, "Accion"] = {}
+
+PARAMETROS_VACIOS = {"type": "object", "properties": {}}
 
 
 @dataclass(frozen=True)
@@ -18,17 +25,61 @@ class Accion:
     nombre: str
     descripcion: str
     funcion: Callable
+    parametros: dict = field(default_factory=lambda: dict(PARAMETROS_VACIOS))
+    escribe: bool = False
+    preparar: Optional[Callable] = None
 
 
-def accion(nombre: str, descripcion: str):
+def accion(
+    nombre: str,
+    descripcion: str,
+    parametros: Optional[dict] = None,
+    escribe: bool = False,
+    preparar: Optional[Callable] = None,
+):
     def decorador(funcion):
-        ACCIONES[nombre] = Accion(nombre, descripcion, funcion)
+        ACCIONES[nombre] = Accion(
+            nombre=nombre,
+            descripcion=descripcion,
+            funcion=funcion,
+            parametros=parametros or dict(PARAMETROS_VACIOS),
+            escribe=escribe,
+            preparar=preparar,
+        )
         return funcion
 
     return decorador
 
 
-def ejecutar(nombre: str, usuario, **parametros):
+def nombre_para_modelo(nombre: str) -> str:
+    """Los proveedores solo admiten [a-zA-Z0-9_-] en nombres de herramienta."""
+    return nombre.replace(".", "__")
+
+
+def nombre_desde_modelo(nombre: str) -> str:
+    return nombre.replace("__", ".")
+
+
+def herramientas_openai() -> list[dict]:
+    """Catálogo en el formato de 'tools' compatible con OpenAI (Groq, Gemini…)."""
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": nombre_para_modelo(a.nombre),
+                "description": a.descripcion,
+                "parameters": a.parametros,
+            },
+        }
+        for a in ACCIONES.values()
+    ]
+
+
+def obtener(nombre: str) -> Accion:
     if nombre not in ACCIONES:
         raise KeyError(f"Acción desconocida: {nombre}")
-    return ACCIONES[nombre].funcion(usuario, **parametros)
+    return ACCIONES[nombre]
+
+
+def ejecutar(nombre: str, usuario, **parametros):
+    return obtener(nombre).funcion(usuario, **parametros)

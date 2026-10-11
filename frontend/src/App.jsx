@@ -5,10 +5,13 @@ import { isLoggedIn } from './lib/api'
 import Agenda from './pages/Agenda'
 import AgregarTarjeta from './pages/AgregarTarjeta'
 import Chat from './pages/Chat'
+import CuentaDetalle from './pages/CuentaDetalle'
+import Cuentas from './pages/Cuentas'
 import Finanzas from './pages/Finanzas'
 import Inicio from './pages/Inicio'
 import Login from './pages/Login'
 import Notas from './pages/Notas'
+import TarjetasDeCuenta from './pages/TarjetasDeCuenta'
 
 function Layout() {
   const { pathname } = useLocation()
@@ -31,6 +34,9 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<Inicio />} />
         <Route path="finanzas" element={<Finanzas />} />
+        <Route path="finanzas/cuentas" element={<Cuentas />} />
+        <Route path="finanzas/cuentas/:id" element={<CuentaDetalle />} />
+        <Route path="finanzas/cuentas/:id/tarjetas" element={<TarjetasDeCuenta />} />
         <Route path="finanzas/nueva" element={<AgregarTarjeta />} />
         <Route path="finanzas/:id/editar" element={<AgregarTarjeta />} />
         <Route path="agenda" element={<Agenda />} />

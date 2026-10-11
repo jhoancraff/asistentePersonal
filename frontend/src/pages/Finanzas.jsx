@@ -1,50 +1,35 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   ArrowDownLeft,
+  ArrowRight,
   ArrowUpRight,
-  Banknote,
   Car,
-  CreditCard,
   Delete,
   Eye,
   EyeOff,
   Gamepad2,
   HeartPulse,
   House,
-  Bitcoin,
-  Landmark,
-  Link2,
-  Pencil,
+  LayoutGrid,
   Plus,
   Receipt,
-  Smartphone,
   ShoppingBasket,
   Tag,
   Trash2,
-  Wallet,
 } from 'lucide-react'
 import ActionButton from '../components/ActionButton'
 import BottomSheet from '../components/BottomSheet'
+import CuentaCard from '../components/CuentaCard'
 import Empty from '../components/Empty'
+import EliminarCuentaSheet from '../components/EliminarCuentaSheet'
 import Fab from '../components/Fab'
 import GlassCard from '../components/GlassCard'
 import { api, listar } from '../lib/api'
-import { bancoPorNombre, enmascararIdentificador } from '../lib/bancos'
 import { decimalesMoneda, fechaRelativa, formatMoney, toISODate } from '../lib/format'
 
-const TIPO_CUENTA = {
-  ahorros: { label: 'Cuenta de ahorros', icon: Landmark },
-  corriente: { label: 'Cuenta corriente', icon: Landmark },
-  debito: { label: 'Tarjeta de débito', icon: CreditCard },
-  credito: { label: 'Tarjeta de crédito', icon: CreditCard },
-  divisas: { label: 'Cuenta en divisas', icon: Wallet },
-  efectivo: { label: 'Efectivo', icon: Banknote },
-  tarjeta: { label: 'Tarjeta', icon: CreditCard },
-  billetera: { label: 'Billetera digital', icon: Smartphone },
-  cripto: { label: 'Cripto', icon: Bitcoin },
-  otra: { label: 'Otra', icon: Wallet },
-}
+// Máximo de cuentas visibles en el carrusel; el resto está en /finanzas/cuentas.
+const MAX_CARRUSEL = 3
 
 function iconoCategoria(nombre = '') {
   const n = nombre.toLowerCase()
@@ -72,8 +57,9 @@ export default function Finanzas() {
   const [oculto, setOculto] = useState(false)
   const [sheetMov, setSheetMov] = useState(false)
   const [aEliminar, setAEliminar] = useState(null)
-  const [eliminando, setEliminando] = useState(false)
   const navigate = useNavigate()
+  const [params] = useSearchParams()
+  const preferida = Number(params.get('cuenta')) || null
   const nuevaCuenta = () => navigate('/finanzas/nueva')
   const carrusel = useRef(null)
 
@@ -99,7 +85,31 @@ export default function Finanzas() {
     cargar()
   }, [cargar])
 
-  const cuenta = cuentas[Math.min(idx, Math.max(cuentas.length - 1, 0))]
+  // El carrusel muestra hasta MAX_CARRUSEL cuentas. Si se llega desde "Mis cuentas" con una
+  // cuenta concreta (?cuenta=ID), esa cuenta pasa al principio del carrusel.
+  // Las tarjetas afiliadas no se listan aparte (compartirían saldo con su cuenta madre y se
+  // vería duplicado): cuelgan de su cuenta madre y se consultan con su botón.
+  const principales = useMemo(() => cuentas.filter((c) => !c.cuenta_madre), [cuentas])
+  const afiliadasDe = useMemo(() => {
+    const mapa = {}
+    for (const c of cuentas) {
+      if (c.cuenta_madre) (mapa[c.cuenta_madre] ??= []).push(c)
+    }
+    return mapa
+  }, [cuentas])
+  const visibles = useMemo(() => {
+    const base = principales.slice(0, MAX_CARRUSEL)
+    let elegida = preferida ? cuentas.find((c) => c.id === preferida) : null
+    // Si se pidió una tarjeta afiliada, se selecciona su cuenta madre.
+    if (elegida?.cuenta_madre) elegida = cuentas.find((c) => c.id === elegida.cuenta_madre) ?? null
+    if (elegida && !base.some((c) => c.id === elegida.id)) {
+      return [elegida, ...base.slice(0, MAX_CARRUSEL - 1)]
+    }
+    return base
+  }, [cuentas, principales, preferida])
+  const hayMas = principales.length > MAX_CARRUSEL
+  const verTodas = () => navigate('/finanzas/cuentas')
+  const cuenta = visibles[Math.min(idx, Math.max(visibles.length - 1, 0))]
   // Una cuenta madre incluye los movimientos de sus tarjetas vinculadas.
   const idsCuenta = useMemo(
     () =>
@@ -142,22 +152,6 @@ export default function Finanzas() {
     }
   }
 
-  async function confirmarEliminar() {
-    if (!aEliminar) return
-    setEliminando(true)
-    try {
-      await api.delete(`/finanzas/cuentas/${aEliminar.id}/`)
-      setAEliminar(null)
-      setIdx(0)
-      await cargar()
-    } catch {
-      setError('No se pudo eliminar la cuenta.')
-      setAEliminar(null)
-    } finally {
-      setEliminando(false)
-    }
-  }
-
   const total = ingresos + gastos
   const pctIngresos = total ? (ingresos / total) * 100 : 0
 
@@ -181,74 +175,46 @@ export default function Finanzas() {
       {cargando ? (
         <div className="skeleton carousel-skeleton" aria-hidden="true" />
       ) : (
-      <div className="carousel" ref={carrusel} onScroll={onScroll}>
-        {cuentas.map((c) => {
-          const Icono = (TIPO_CUENTA[c.tipo] ?? TIPO_CUENTA.otra).icon
-          return (
-            <div
+        <div className="carousel" ref={carrusel} onScroll={onScroll}>
+          {visibles.map((c) => (
+            <CuentaCard
               key={c.id}
-              className="bank-card"
-              data-bank={c.tema || bancoPorNombre(c.banco)?.tema || 'generico'}
-            >
-              <div className="bank-card-top">
-                <Icono size={22} aria-hidden="true" />
-                <span>{c.banco || (TIPO_CUENTA[c.tipo] ?? TIPO_CUENTA.otra).label}</span>
-              </div>
-              <div className="bank-card-tools">
-                <button
-                  type="button"
-                  className="card-tool"
-                  onClick={() => navigate(`/finanzas/${c.id}/editar`)}
-                  aria-label={`Editar ${c.nombre}`}
-                >
-                  <Pencil size={16} aria-hidden="true" />
-                </button>
-                <button
-                  type="button"
-                  className="card-tool"
-                  onClick={() => setAEliminar(c)}
-                  aria-label={`Eliminar ${c.nombre}`}
-                >
-                  <Trash2 size={16} aria-hidden="true" />
-                </button>
-              </div>
-              <div className="bank-card-balance">
-                {oculto ? '••••••' : formatMoney(c.saldo, c.moneda)}
-              </div>
-              {c.cuenta_madre && cuentaPorId[c.cuenta_madre] && (
-                <span className="card-link">
-                  <Link2 size={13} aria-hidden="true" />
-                  Saldo de {cuentaPorId[c.cuenta_madre].banco || cuentaPorId[c.cuenta_madre].nombre}
-                </span>
-              )}
-              <div className="bank-card-bottom">
-                <span>
-                  {c.ultimos_digitos
-                    ? `${(TIPO_CUENTA[c.tipo] ?? TIPO_CUENTA.otra).label} ••${c.ultimos_digitos}`
-                    : c.identificador
-                      ? `${(TIPO_CUENTA[c.tipo] ?? TIPO_CUENTA.otra).label} · ${enmascararIdentificador(c.identificador)}`
-                      : c.nombre}
-                </span>
-                <span className="muted-on-card">
-                  {c.activa ? c.moneda : `${c.moneda} · Inactiva`}
-                </span>
-              </div>
-            </div>
-          )
-        })}
-        <button type="button" className="bank-card bank-card-add" onClick={nuevaCuenta}>
-          <Plus size={28} aria-hidden="true" />
-          <span>Nueva cuenta</span>
-        </button>
-      </div>
+              cuenta={c}
+              tarjetas={afiliadasDe[c.id] ?? []}
+              oculto={oculto}
+              onVerTarjetas={() => navigate(`/finanzas/cuentas/${c.id}/tarjetas`)}
+              onDetalle={() => navigate(`/finanzas/cuentas/${c.id}`)}
+              onEditar={() => navigate(`/finanzas/${c.id}/editar`)}
+              onEliminar={() => setAEliminar(c)}
+            />
+          ))}
+          {hayMas && (
+            <button type="button" className="bank-card bank-card-more" onClick={verTodas}>
+              <LayoutGrid size={26} aria-hidden="true" />
+              <strong>Ver todas</strong>
+              <span>{principales.length} cuentas</span>
+            </button>
+          )}
+          <button type="button" className="bank-card bank-card-add" onClick={nuevaCuenta}>
+            <Plus size={28} aria-hidden="true" />
+            <span>Nueva cuenta</span>
+          </button>
+        </div>
       )}
 
-      {cuentas.length > 1 && (
+      {visibles.length > 1 && (
         <div className="dots" aria-hidden="true">
-          {cuentas.map((c, i) => (
+          {visibles.map((c, i) => (
             <span key={c.id} className={i === idx ? 'dot active' : 'dot'} />
           ))}
         </div>
+      )}
+
+      {!cargando && hayMas && (
+        <button type="button" className="see-all" onClick={verTodas}>
+          Ver todas las cuentas ({principales.length})
+          <ArrowRight size={16} aria-hidden="true" />
+        </button>
       )}
 
       <GlassCard className="balance-chart">
@@ -345,34 +311,17 @@ export default function Finanzas() {
 
       <Fab label="Registrar movimiento" onClick={() => (cuentas.length ? setSheetMov(true) : nuevaCuenta())} />
 
-      <BottomSheet
-        open={Boolean(aEliminar)}
+      <EliminarCuentaSheet
+        cuenta={aEliminar}
+        cuentas={cuentas}
+        movimientos={movimientos}
         onClose={() => setAEliminar(null)}
-        title="Eliminar cuenta"
-      >
-        <p>
-          Vas a eliminar <strong>{aEliminar?.nombre}</strong>
-          {aEliminar && movimientos.some((m) => m.cuenta === aEliminar.id)
-            ? ` y sus ${movimientos.filter((m) => m.cuenta === aEliminar.id).length} movimientos`
-            : ''}
-          . Esta acción no se puede deshacer.
-        </p>
-        {aEliminar && cuentas.some((c) => c.cuenta_madre === aEliminar.id) && (
-          <p className="muted">
-            Sus tarjetas vinculadas se conservan, pero quedarán sin cuenta madre.
-          </p>
-        )}
-        <p className="muted">
-          Si solo quieres dejar de contarla en tu balance, edítala y desactívala en lugar de
-          eliminarla.
-        </p>
-        <ActionButton variant="danger" full icon={Trash2} loading={eliminando} onClick={confirmarEliminar}>
-          Eliminar definitivamente
-        </ActionButton>
-        <ActionButton variant="ghost" full onClick={() => setAEliminar(null)}>
-          Cancelar
-        </ActionButton>
-      </BottomSheet>
+        onEliminada={() => {
+          setAEliminar(null)
+          setIdx(0)
+          cargar()
+        }}
+      />
 
       {sheetMov && (
         <MovimientoSheet

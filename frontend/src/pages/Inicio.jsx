@@ -105,7 +105,8 @@ export default function Inicio() {
             {eventosHoy.length} {eventosHoy.length === 1 ? 'evento hoy' : 'eventos hoy'}
           </Badge>
           <Badge tone="muted">
-            {cuentas.length} {cuentas.length === 1 ? 'cuenta' : 'cuentas'}
+            {cuentas.filter((c) => !c.cuenta_madre).length}{' '}
+            {cuentas.filter((c) => !c.cuenta_madre).length === 1 ? 'cuenta' : 'cuentas'}
           </Badge>
         </div>
         <div className="uplink">

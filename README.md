@@ -49,6 +49,33 @@ npm run dev                       # http://localhost:5173
   licencia **CC BY-NC 4.0: solo uso no comercial**, ~19 MB). Acepta `--pais CO --pais US`.
 - Lo que escribas a mano ("Otro…") queda guardado para tu usuario.
 
+## Agente de IA (fase 1: texto)
+
+Chat con herramientas sobre tus finanzas, agenda y notas. Proveedores gratuitos, en orden:
+**Groq** → **Gemini** (si uno falla por límite o red, usa el siguiente).
+
+1. Crea una llave en <https://console.groq.com/keys> (y opcionalmente en <https://aistudio.google.com/apikey>).
+2. Ponla en `backend/.env`: `GROQ_API_KEY=...` (y `GEMINI_API_KEY=...`) y reinicia el servidor.
+3. Verifica: `python manage.py probar_ia` (conexión, región y tool calling por proveedor).
+
+Seguridad:
+- **Consultar** es libre. **Crear, editar o eliminar** siempre queda como acción pendiente y solo se
+  ejecuta cuando confirmas con el botón (expira a los 15 min).
+- Las notas seguras cifradas y las notas sensibles **no** están al alcance del agente.
+- Los datos que se envían al proveedor son solo los necesarios (sin documento, correo ni titular).
+- Las herramientas viven en `backend/chat/herramientas.py`; el bucle del agente en `chat/agente.py`.
+
+## Notas seguras (cifradas)
+
+Las notas ancladas a una cuenta (claves, preguntas de seguridad) se guardan **cifradas**
+con AES-256-GCM; la base de datos solo contiene `enc:v1:...`.
+
+- La clave vive en `backend/.env` (`FIELD_ENCRYPTION_KEYS`), **no** en la base de datos ni en git.
+  Genérala con `python manage.py generar_clave_cifrado`.
+- **Respalda esa clave** (gestor de contraseñas). Si se pierde, las notas no se pueden recuperar.
+- Rotación: pon la clave nueva primero (`k2:...,k1:...`) y ejecuta `python manage.py rotar_cifrado`.
+- Estas notas no se exponen al futuro agente de IA (no están registradas con `@accion`).
+
 ## Probar desde el teléfono (misma red Wi-Fi)
 
 1. Averigua la IP de tu PC con `ipconfig` (ej. `192.168.X.X`).

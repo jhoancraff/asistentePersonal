@@ -112,3 +112,21 @@ CORS_ALLOWED_ORIGINS = config(
 VAPID_PUBLIC_KEY = config("VAPID_PUBLIC_KEY", default="")
 VAPID_PRIVATE_KEY = config("VAPID_PRIVATE_KEY", default="")
 VAPID_CLAIM_EMAIL = config("VAPID_CLAIM_EMAIL", default="admin@localhost")
+
+# Cifrado de campos sensibles (notas seguras de cuentas). Formato: "id:clave_base64url".
+# Genera una con: python manage.py generar_clave_cifrado   (guárdala también en tu respaldo)
+FIELD_ENCRYPTION_KEYS = config("FIELD_ENCRYPTION_KEYS", default="")
+
+# Agente de IA (fase 1: texto con herramientas). Proveedores en orden de preferencia;
+# si uno falla (límite, red, región) se usa el siguiente. Ambos hablan el formato OpenAI.
+IA_PROVEEDORES = config("IA_PROVEEDORES", default="groq,gemini", cast=Csv())
+GROQ_API_KEY = config("GROQ_API_KEY", default="")
+GROQ_MODEL = config("GROQ_MODEL", default="llama-3.3-70b-versatile")
+GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
+GEMINI_MODEL = config("GEMINI_MODEL", default="gemini-2.5-flash")
+# Opcional: otra URL compatible con OpenAI (proxy, pruebas). Vacío = la oficial.
+GROQ_BASE_URL = config("GROQ_BASE_URL", default="")
+GEMINI_BASE_URL = config("GEMINI_BASE_URL", default="")
+IA_TIMEOUT_SEGUNDOS = config("IA_TIMEOUT_SEGUNDOS", default=45, cast=int)
+IA_MAX_PASOS = config("IA_MAX_PASOS", default=5, cast=int)
+ACCION_PENDIENTE_MINUTOS = config("ACCION_PENDIENTE_MINUTOS", default=15, cast=int)

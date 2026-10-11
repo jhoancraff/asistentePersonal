@@ -38,3 +38,33 @@ class Mensaje(AuditModel):
 
     class Meta:
         ordering = ["fecha_creacion"]
+
+
+class AccionPendiente(AuditModel):
+    """Acción que el agente propone y que SOLO se ejecuta cuando el usuario confirma."""
+
+    class Estado(models.TextChoices):
+        PENDIENTE = "pendiente", "Pendiente de confirmación"
+        CONFIRMADA = "confirmada", "Confirmada y ejecutada"
+        CANCELADA = "cancelada", "Cancelada"
+        FALLIDA = "fallida", "Falló al ejecutarse"
+        EXPIRADA = "expirada", "Expiró"
+
+    conversacion = models.ForeignKey(
+        Conversacion, on_delete=models.CASCADE, related_name="acciones_pendientes"
+    )
+    mensaje = models.ForeignKey(
+        Mensaje, null=True, blank=True, on_delete=models.SET_NULL, related_name="acciones_pendientes"
+    )
+    nombre = models.CharField(max_length=80)  # p. ej. finanzas.crear_movimiento
+    parametros = models.JSONField(default=dict)  # ya validados y normalizados
+    resumen = models.CharField(max_length=500)
+    estado = models.CharField(max_length=12, choices=Estado.choices, default=Estado.PENDIENTE)
+    resultado = models.TextField(blank=True)
+    resuelta_en = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["fecha_creacion", "id"]
+
+    def __str__(self):
+        return f"{self.nombre} [{self.estado}]"

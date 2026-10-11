@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   ArrowLeft,
   BadgeCheck,
@@ -147,6 +147,10 @@ function reducer(estado, accion) {
       return { ...estado, [accion.campo]: accion.valor }
     case 'cargar':
       return accion.valor
+    case 'preset': {
+      const v = accion.valor
+      return { ...estado, ...v, pais: v.pais || estado.pais }
+    }
     case 'instrumento': {
       const instrumento = accion.valor
       const clase = claseDe(instrumento)
@@ -302,6 +306,8 @@ function validar(e, editando) {
 export default function AgregarTarjeta() {
   const navigate = useNavigate()
   const { id } = useParams()
+  const [params] = useSearchParams()
+  const madreParam = params.get('madre')
   const editando = Boolean(id)
   const [e, dispatch] = useReducer(reducer, INICIAL)
   const [original, setOriginal] = useState(null)
@@ -309,6 +315,7 @@ export default function AgregarTarjeta() {
   const [catalogo, setCatalogo] = useState([])
   const [cuentas, setCuentas] = useState([])
   const madreTocada = useRef(false)
+  const presetAplicado = useRef(false)
   const [busqueda, setBusqueda] = useState('')
   const [resultados, setResultados] = useState([])
   const [otraMoneda, setOtraMoneda] = useState(false)
@@ -432,6 +439,30 @@ export default function AgregarTarjeta() {
     [cuentas, id, e.moneda, e.cuentaMadre],
   )
   const madre = cuentas.find((c) => String(c.id) === e.cuentaMadre) ?? null
+
+  // Llegada desde "Afiliar otra tarjeta": la cuenta madre y su institución ya vienen elegidas.
+  useEffect(() => {
+    if (editando || !madreParam || presetAplicado.current || cuentas.length === 0) return
+    const p = cuentas.find((c) => String(c.id) === madreParam)
+    if (!p) return
+    presetAplicado.current = true
+    madreTocada.current = true
+    dispatch({
+      tipo: 'preset',
+      valor: {
+        instrumento: 'debito',
+        banco: p.banco,
+        bancoLibre: false,
+        bancoTema: p.tema || 'generico',
+        bancoCodigo: p.banco_codigo || '',
+        bancoClase: p.clase_institucion || 'banco',
+        bic: p.swift_bic || '',
+        pais: p.pais || '',
+        moneda: p.moneda,
+        cuentaMadre: String(p.id),
+      },
+    })
+  }, [editando, madreParam, cuentas])
 
   // Si hay exactamente una cuenta de la misma plataforma, se propone como madre.
   useEffect(() => {

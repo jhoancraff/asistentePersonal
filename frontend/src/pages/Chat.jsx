@@ -1,5 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { BadgeCheck, Info, Mic, Pause, Play, SendHorizontal, Sparkles, Square } from 'lucide-react'
+import {
+  AlertTriangle,
+  BadgeCheck,
+  Check,
+  Info,
+  Mic,
+  Pause,
+  Play,
+  SendHorizontal,
+  Sparkles,
+  Square,
+  X,
+} from 'lucide-react'
 import { api, backendOrigin, listar } from '../lib/api'
 import { hora } from '../lib/format'
 
@@ -47,15 +59,49 @@ function ReproductorAudio({ src }) {
   )
 }
 
-function Accion({ accion }) {
-  const titulo = typeof accion === 'string' ? accion : accion.titulo || accion.nombre || 'Acción ejecutada'
-  const detalle = typeof accion === 'object' ? accion.detalle : null
+const ETIQUETA_ESTADO = {
+  confirmada: 'Hecho',
+  cancelada: 'Cancelada',
+  fallida: 'No se pudo',
+  expirada: 'Expiró',
+}
+
+/** Tarjeta de una acción propuesta por Luz: se ejecuta solo si el usuario confirma. */
+function Accion({ accion, ocupada, onConfirmar, onCancelar }) {
+  const pendiente = accion.estado === 'pendiente'
+  const exito = accion.estado === 'confirmada'
+  const Icono = exito ? BadgeCheck : pendiente ? Info : AlertTriangle
   return (
-    <div className="action-card">
-      <BadgeCheck size={20} className="c-success" aria-hidden="true" />
-      <div>
-        <strong>{titulo}</strong>
-        {detalle && <span className="muted">{detalle}</span>}
+    <div className={`action-card estado-${accion.estado}`}>
+      <Icono size={20} className={exito ? 'c-success' : pendiente ? 'c-violet' : 'c-danger'} aria-hidden="true" />
+      <div className="action-body">
+        <strong>{pendiente ? 'Confirma esta acción' : ETIQUETA_ESTADO[accion.estado] ?? accion.estado}</strong>
+        <span className="muted">{accion.resumen}</span>
+        {accion.estado === 'fallida' && accion.resultado && (
+          <span className="c-danger">{accion.resultado}</span>
+        )}
+        {pendiente && (
+          <div className="action-buttons">
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              disabled={ocupada}
+              onClick={() => onConfirmar(accion.id)}
+            >
+              <Check size={16} aria-hidden="true" />
+              Confirmar
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              disabled={ocupada}
+              onClick={() => onCancelar(accion.id)}
+            >
+              <X size={16} aria-hidden="true" />
+              Cancelar
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -70,6 +116,8 @@ export default function Chat() {
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const [cargando, setCargando] = useState(true)
+  const [ia, setIa] = useState(null)
+  const [accionOcupada, setAccionOcupada] = useState(null)
   const recorder = useRef(null)
   const trozos = useRef([])
   const stream = useRef(null)
@@ -83,6 +131,10 @@ export default function Chat() {
       setConversacion(conv)
       const { data } = await api.get(`/chat/conversaciones/${conv.id}/mensajes/`)
       setMensajes(data)
+      api
+        .get('/chat/estado/')
+        .then((r) => setIa(r.data))
+        .catch(() => setIa(null))
       setError('')
     } catch {
       setError('No se pudo abrir el chat.')
@@ -112,16 +164,50 @@ export default function Chat() {
     [],
   )
 
-  async function enviar(formData) {
+  async function enviar(formData, textoOptimista = '') {
     setEnviando(true)
     setError('')
+    const temporal = `tmp-${Date.now()}`
+    if (textoOptimista) {
+      // El mensaje del usuario aparece al instante; luego se reemplaza por el guardado.
+      setMensajes((m) => [
+        ...m,
+        { id: temporal, rol: 'usuario', texto: textoOptimista, fecha_creacion: new Date().toISOString(), acciones: [] },
+      ])
+    }
     try {
       const { data } = await api.post(`/chat/conversaciones/${conversacion.id}/mensajes/`, formData)
-      setMensajes((m) => [...m, data])
+      setMensajes((m) => [...m.filter((x) => x.id !== temporal), ...data.mensajes])
     } catch {
+      setMensajes((m) => m.filter((x) => x.id !== temporal))
       setError('No se pudo enviar el mensaje.')
     } finally {
       setEnviando(false)
+    }
+  }
+
+  function actualizarAccion(accion) {
+    setMensajes((ms) =>
+      ms.map((m) => ({
+        ...m,
+        acciones: (m.acciones ?? []).map((a) => (a.id === accion.id ? { ...a, ...accion } : a)),
+      })),
+    )
+  }
+
+  async function resolverAccion(id, verbo) {
+    setAccionOcupada(id)
+    setError('')
+    try {
+      const { data } = await api.post(`/chat/acciones/${id}/${verbo}/`)
+      actualizarAccion(data.accion)
+      setMensajes((m) => [...m, data.mensaje])
+    } catch (err) {
+      const d = err.response?.data
+      if (d?.accion) actualizarAccion(d.accion)
+      setError(d?.detail ?? 'No se pudo completar la acción.')
+    } finally {
+      setAccionOcupada(null)
     }
   }
 
@@ -132,7 +218,7 @@ export default function Chat() {
     setTexto('')
     const fd = new FormData()
     fd.append('texto', t)
-    await enviar(fd)
+    await enviar(fd, t)
   }
 
   async function iniciarGrabacion() {
@@ -184,10 +270,20 @@ export default function Chat() {
       </div>
 
       <div className="chat-scroll">
-        <div className="chat-notice">
-          <Info size={16} aria-hidden="true" />
-          La IA de Luz aún no está conectada: tus mensajes y audios se guardan, pero todavía no recibirás respuesta.
-        </div>
+        {ia && !ia.configurada && (
+          <div className="chat-notice">
+            <Info size={16} aria-hidden="true" />
+            La IA aún no tiene llave configurada: define GROQ_API_KEY (o GEMINI_API_KEY) en
+            backend/.env y reinicia el servidor.
+          </div>
+        )}
+        {ia?.configurada && mensajes.length === 0 && !cargando && (
+          <div className="chat-notice">
+            <Info size={16} aria-hidden="true" />
+            Pregúntame por tus saldos o movimientos, o pídeme registrar un gasto o crear un evento.
+            Antes de crear, editar o eliminar algo, siempre te pediré confirmación.
+          </div>
+        )}
 
         {cargando && <div className="skeleton" aria-hidden="true" />}
 
@@ -205,12 +301,32 @@ export default function Chat() {
                 {audio && <ReproductorAudio src={audio} />}
                 {(m.texto || m.transcripcion) && <p>{m.texto || m.transcripcion}</p>}
                 {Array.isArray(m.acciones) &&
-                  m.acciones.map((a, i) => <Accion key={i} accion={a} />)}
+                  m.acciones.map((a) => (
+                    <Accion
+                      key={a.id}
+                      accion={a}
+                      ocupada={accionOcupada === a.id}
+                      onConfirmar={(id) => resolverAccion(id, 'confirmar')}
+                      onCancelar={(id) => resolverAccion(id, 'cancelar')}
+                    />
+                  ))}
                 <time className="bubble-time">{hora(m.fecha_creacion)}</time>
               </div>
             </div>
           )
         })}
+        {enviando && (
+          <div className="bubble-row" role="status" aria-label="Luz está pensando">
+            <span className="avatar sm" aria-hidden="true">
+              <Sparkles size={14} />
+            </span>
+            <div className="bubble luz typing" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </div>
+          </div>
+        )}
         <div ref={fin} />
       </div>
 

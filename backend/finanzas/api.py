@@ -2,13 +2,27 @@ import re
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db.models import Q
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import status, viewsets
+from rest_framework.exceptions import APIException, NotFound
+from rest_framework.response import Response
+
+from core.crypto import CifradoError, CifradoNoConfigurado
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import serializers
 
 from core.api import AuditSerializer, ServiceViewSet
 
 from .models import Categoria, Cuenta, Movimiento, Proveedor
-from .services import CategoriaService, CuentaService, MovimientoService, ProveedorService
+from .services import (
+    CategoriaService,
+    CuentaService,
+    MovimientoService,
+    NotaSeguraService,
+    ProveedorService,
+)
 from .validators import validar_documento
 
 
@@ -128,3 +142,106 @@ class ProveedorViewSet(ServiceViewSet):
     def perform_destroy(self, instance):
         self._solo_propias(instance)
         super().perform_destroy(instance)
+
+
+class CifradoNoDisponible(APIException):
+    status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    default_detail = "El cifrado no está configurado en el servidor."
+    default_code = "cifrado_no_disponible"
+
+
+class NotaSeguraEntrada(serializers.Serializer):
+    cuenta = serializers.IntegerField(required=False)
+    titulo = serializers.CharField(max_length=120, trim_whitespace=True)
+    contenido = serializers.CharField(max_length=5000, trim_whitespace=False)
+
+
+class NotaSeguraEdicion(serializers.Serializer):
+    titulo = serializers.CharField(max_length=120, trim_whitespace=True, required=False)
+    contenido = serializers.CharField(max_length=5000, trim_whitespace=False, required=False)
+
+
+def _meta(nota):
+    return {
+        "id": nota.id,
+        "cuenta": nota.cuenta_id,
+        "fecha_creacion": nota.fecha_creacion,
+        "fecha_actualizacion": nota.fecha_actualizacion,
+    }
+
+
+@method_decorator(never_cache, name="dispatch")
+class NotaSeguraViewSet(viewsets.ViewSet):
+    """Notas cifradas por cuenta.
+
+    - GET ?cuenta=ID  → solo ids y títulos (el contenido no viaja en el listado).
+    - GET /{id}/      → título y contenido descifrados (se pide al "mostrar").
+    Las respuestas llevan Cache-Control: no-store.
+    """
+
+    def _usuario(self):
+        return self.request.user
+
+    def _manejar(self, fn):
+        try:
+            return fn()
+        except CifradoNoConfigurado as exc:
+            raise CifradoNoDisponible() from exc
+        except CifradoError as exc:
+            raise APIException(
+                "No se pudo descifrar la nota (¿cambió la clave de cifrado?)."
+            ) from exc
+        except ObjectDoesNotExist as exc:
+            raise NotFound("La nota o la cuenta no existe.") from exc
+
+    def list(self, request):
+        cuenta = request.query_params.get("cuenta")
+        if not cuenta or not cuenta.isdigit():
+            return Response({"cuenta": ["Indica ?cuenta=ID."]}, status=400)
+
+        def _hacer():
+            notas = NotaSeguraService.listar_por_cuenta(self._usuario(), int(cuenta))
+            return [{**_meta(n), "titulo": NotaSeguraService.titulo(n)} for n in notas]
+
+        return Response(self._manejar(_hacer))
+
+    def create(self, request):
+        ser = NotaSeguraEntrada(data=request.data)
+        ser.is_valid(raise_exception=True)
+        d = ser.validated_data
+        if "cuenta" not in d:
+            return Response({"cuenta": ["Este campo es obligatorio."]}, status=400)
+
+        def _hacer():
+            n = NotaSeguraService.crear_nota(self._usuario(), d["cuenta"], d["titulo"], d["contenido"])
+            return {**_meta(n), "titulo": d["titulo"]}
+
+        return Response(self._manejar(_hacer), status=201)
+
+    def retrieve(self, request, pk=None):
+        def _hacer():
+            n = NotaSeguraService.obtener(self._usuario(), pk)
+            return {
+                **_meta(n),
+                "titulo": NotaSeguraService.titulo(n),
+                "contenido": NotaSeguraService.contenido(n),
+            }
+
+        return Response(self._manejar(_hacer))
+
+    def partial_update(self, request, pk=None):
+        ser = NotaSeguraEdicion(data=request.data)
+        ser.is_valid(raise_exception=True)
+        d = ser.validated_data
+
+        def _hacer():
+            n = NotaSeguraService.actualizar_nota(
+                self._usuario(), pk, titulo=d.get("titulo"), contenido=d.get("contenido")
+            )
+            return {**_meta(n), "titulo": NotaSeguraService.titulo(n)}
+
+        return Response(self._manejar(_hacer))
+
+    def destroy(self, request, pk=None):
+        self._manejar(lambda: NotaSeguraService.eliminar(self._usuario(), pk))
+        return Response(status=204)

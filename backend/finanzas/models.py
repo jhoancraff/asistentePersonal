@@ -114,3 +114,21 @@ class Movimiento(AuditModel):
 
     def __str__(self):
         return f"{self.tipo} {self.monto}"
+
+
+class NotaSegura(AuditModel):
+    """Nota anclada a una cuenta (claves, preguntas de seguridad…).
+
+    El título y el contenido se guardan CIFRADOS (AES-256-GCM, ver core.crypto);
+    la base de datos nunca contiene el texto en claro.
+    """
+
+    cuenta = models.ForeignKey(Cuenta, on_delete=models.CASCADE, related_name="notas_seguras")
+    titulo_cifrado = models.TextField()
+    contenido_cifrado = models.TextField()
+
+    class Meta:
+        ordering = ["fecha_creacion", "id"]
+
+    def __str__(self):
+        return f"Nota segura #{self.pk} de la cuenta {self.cuenta_id}"
