@@ -1,0 +1,754 @@
+[
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Banesco",
+  "codigo": "0134",
+  "tema": "banesco",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Banco de Venezuela (BDV)",
+  "codigo": "0102",
+  "tema": "bdv",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Mercantil",
+  "codigo": "0105",
+  "tema": "mercantil",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "BBVA Provincial",
+  "codigo": "0108",
+  "tema": "provincial",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Bancamiga",
+  "codigo": "0172",
+  "tema": "bancamiga",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "BNC",
+  "codigo": "0191",
+  "tema": "bnc",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Bancaribe",
+  "codigo": "0114",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Banco Exterior",
+  "codigo": "0115",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "BOD",
+  "codigo": "0116",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Banplus",
+  "codigo": "0174",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Banco del Tesoro",
+  "codigo": "0163",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Bicentenario",
+  "codigo": "0175",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Banco Activo",
+  "codigo": "0171",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "BFC",
+  "codigo": "0151",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Banco Plaza",
+  "codigo": "0138",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Sofitasa",
+  "codigo": "0137",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Bancrecer",
+  "codigo": "0168",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "100% Banco",
+  "codigo": "0156",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Mi Banco",
+  "codigo": "0169",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Banco Caroní",
+  "codigo": "0128",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Venezolano de Crédito",
+  "codigo": "0104",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "Banco Agrícola",
+  "codigo": "0166",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "VE",
+  "nombre": "BANFANB",
+  "codigo": "0177",
+  "tema": "generico",
+  "moneda_sugerida": "VES"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Bancolombia",
+  "codigo": "",
+  "tema": "bancolombia",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Davivienda",
+  "codigo": "",
+  "tema": "davivienda",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Banco de Bogotá",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "BBVA Colombia",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Banco de Occidente",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Banco Popular",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "AV Villas",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Scotiabank Colpatria",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Itaú",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Banco Caja Social",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "GNB Sudameris",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Banco Agrario",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Banco Falabella",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Banco W",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Bancoomeva",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Banco Pichincha",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Lulo Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "CO",
+  "nombre": "Nu Colombia",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "billetera",
+  "pais": "CO",
+  "nombre": "Nequi",
+  "codigo": "",
+  "tema": "nequi",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "billetera",
+  "pais": "CO",
+  "nombre": "Daviplata",
+  "codigo": "",
+  "tema": "daviplata",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "billetera",
+  "pais": "CO",
+  "nombre": "Movii",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "billetera",
+  "pais": "CO",
+  "nombre": "RappiPay",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "billetera",
+  "pais": "CO",
+  "nombre": "Dale!",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "COP"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Chase",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Bank of America",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Wells Fargo",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Citibank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Capital One",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "U.S. Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "PNC Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "TD Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Truist",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Charles Schwab Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Ally Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Navy Federal Credit Union",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "USAA",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Citizens Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Fifth Third Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Regions Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Santander Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "US",
+  "nombre": "Discover Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "billetera",
+  "pais": "US",
+  "nombre": "Zelle",
+  "codigo": "",
+  "tema": "zelle",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "billetera",
+  "pais": "US",
+  "nombre": "Cash App",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "billetera",
+  "pais": "US",
+  "nombre": "Venmo",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "PA",
+  "nombre": "Banco General",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "PA",
+  "nombre": "Banistmo",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "PA",
+  "nombre": "Global Bank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "PA",
+  "nombre": "Multibank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "PA",
+  "nombre": "Banco Nacional de Panamá",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "billetera",
+  "pais": "",
+  "nombre": "Zinli",
+  "codigo": "",
+  "tema": "zinli",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "banco",
+  "pais": "ES",
+  "nombre": "Santander",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "EUR"
+ },
+ {
+  "clase": "banco",
+  "pais": "ES",
+  "nombre": "BBVA",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "EUR"
+ },
+ {
+  "clase": "banco",
+  "pais": "ES",
+  "nombre": "CaixaBank",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "EUR"
+ },
+ {
+  "clase": "banco",
+  "pais": "ES",
+  "nombre": "Banco Sabadell",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "EUR"
+ },
+ {
+  "clase": "banco",
+  "pais": "ES",
+  "nombre": "Bankinter",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "EUR"
+ },
+ {
+  "clase": "billetera",
+  "pais": "",
+  "nombre": "PayPal",
+  "codigo": "",
+  "tema": "paypal",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "billetera",
+  "pais": "",
+  "nombre": "Wise",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "billetera",
+  "pais": "",
+  "nombre": "Revolut",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "EUR"
+ },
+ {
+  "clase": "billetera",
+  "pais": "",
+  "nombre": "Airtm",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "billetera",
+  "pais": "",
+  "nombre": "Payoneer",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "billetera",
+  "pais": "",
+  "nombre": "Skrill",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "Binance",
+  "codigo": "",
+  "tema": "binance",
+  "moneda_sugerida": "USDT"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "Bybit",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USDT"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "OKX",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USDT"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "KuCoin",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USDT"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "Bitget",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USDT"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "Coinbase",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "Kraken",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USD"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "Bitso",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USDT"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "Trust Wallet",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "USDT"
+ },
+ {
+  "clase": "cripto",
+  "pais": "",
+  "nombre": "MetaMask",
+  "codigo": "",
+  "tema": "generico",
+  "moneda_sugerida": "ETH"
+ }
+]

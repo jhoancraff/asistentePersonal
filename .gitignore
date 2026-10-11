@@ -1,0 +1,53 @@
+# Secretos y entorno
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+vapid_private*
+secrets/
+
+# Python
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Django
+backend/staticfiles/
+backend/media/
+*.sqlite3
+*.log
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/dev-dist/
+.vite/
+npm-debug.log*
+yarn-error.log*
+.eslintcache
+
+# Base de datos / backups
+*.sql
+*.dump
+*.bak
+
+# Editor / SO
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Herramientas locales
+.claude/
+graphify-out/

@@ -1,0 +1,667 @@
+/* ───────── Temas por banco (también los usa el carrusel de Finanzas) ───────── */
+[data-bank] {
+  --card-fg: #ffffff;
+  --card-accent: #00f2fe;
+}
+[data-bank='banesco'] {
+  --card-grad: linear-gradient(135deg, #02281c 0%, #066b46 55%, #0aa89c 100%);
+  --card-accent: #34f5c5;
+  --card-reflect: radial-gradient(60% 80% at 85% 10%, rgba(0, 242, 254, 0.35), transparent 60%),
+    radial-gradient(50% 70% at 10% 100%, rgba(52, 245, 197, 0.3), transparent 60%);
+}
+[data-bank='bdv'] {
+  --card-grad: linear-gradient(135deg, #061a4a 0%, #0f3aa8 60%, #1a55e0 100%);
+  --card-accent: #ff5577;
+  --card-reflect: radial-gradient(40% 55% at 90% 15%, rgba(255, 46, 99, 0.4), transparent 62%),
+    radial-gradient(60% 70% at 5% 100%, rgba(120, 170, 255, 0.35), transparent 60%);
+}
+[data-bank='mercantil'] {
+  --card-grad: linear-gradient(135deg, #060f2e 0%, #0d2260 60%, #15317f 100%);
+  --card-accent: #ff8a2b;
+  --card-reflect: radial-gradient(50% 70% at 88% 12%, rgba(255, 122, 26, 0.42), transparent 62%),
+    radial-gradient(50% 60% at 8% 100%, rgba(80, 120, 255, 0.28), transparent 60%);
+}
+[data-bank='provincial'] {
+  --card-grad: linear-gradient(135deg, #07227a 0%, #1038c4 55%, #1f5cf0 100%);
+  --card-accent: #5cd0ff;
+  --card-reflect: radial-gradient(55% 75% at 85% 8%, rgba(92, 208, 255, 0.5), transparent 60%),
+    radial-gradient(50% 60% at 5% 100%, rgba(0, 220, 255, 0.28), transparent 60%);
+}
+[data-bank='bancamiga'] {
+  --card-grad: linear-gradient(135deg, #061a3c 0%, #0a3a78 60%, #0f5aa0 100%);
+  --card-accent: #2de2c6;
+  --card-reflect: radial-gradient(55% 70% at 88% 12%, rgba(45, 226, 198, 0.42), transparent 62%),
+    radial-gradient(50% 60% at 5% 100%, rgba(40, 140, 255, 0.28), transparent 60%);
+}
+[data-bank='bnc'] {
+  --card-grad: linear-gradient(135deg, #131519 0%, #2a2e35 55%, #4a4f59 100%);
+  --card-accent: #e6c15a;
+  --card-reflect: radial-gradient(45% 60% at 88% 10%, rgba(230, 193, 90, 0.38), transparent 62%),
+    linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.07) 50%, transparent 60%);
+}
+[data-bank='generico'] {
+  --card-grad: linear-gradient(135deg, #07090e 0%, #131a26 60%, #1b2536 100%);
+  --card-accent: #00f2fe;
+  --card-reflect: radial-gradient(50% 70% at 90% 10%, rgba(0, 242, 254, 0.28), transparent 60%),
+    radial-gradient(50% 60% at 5% 100%, rgba(139, 92, 246, 0.22), transparent 60%);
+}
+[data-bank='bancolombia'] {
+  --card-grad: linear-gradient(135deg, #14120a 0%, #3a3208 55%, #8a7410 100%);
+  --card-accent: #fdda24;
+  --card-reflect: radial-gradient(50% 70% at 88% 10%, rgba(253, 218, 36, 0.4), transparent 62%);
+}
+[data-bank='davivienda'] {
+  --card-grad: linear-gradient(135deg, #2a0508 0%, #8a0f1c 60%, #d3202f 100%);
+  --card-accent: #ff6b78;
+  --card-reflect: radial-gradient(50% 70% at 88% 10%, rgba(255, 107, 120, 0.4), transparent 62%);
+}
+[data-bank='nequi'] {
+  --card-grad: linear-gradient(135deg, #1d0a23 0%, #6b0f5a 55%, #da0081 100%);
+  --card-accent: #ff5cb8;
+  --card-reflect: radial-gradient(50% 70% at 88% 10%, rgba(255, 92, 184, 0.4), transparent 62%);
+}
+[data-bank='daviplata'] {
+  --card-grad: linear-gradient(135deg, #2b0508 0%, #a1121d 60%, #ed1c27 100%);
+  --card-accent: #ff8a8f;
+  --card-reflect: radial-gradient(50% 70% at 88% 10%, rgba(255, 138, 143, 0.35), transparent 62%);
+}
+[data-bank='zelle'] {
+  --card-grad: linear-gradient(135deg, #1b0a3a 0%, #4a15a8 60%, #6d1ed4 100%);
+  --card-accent: #b58cff;
+  --card-reflect: radial-gradient(50% 70% at 88% 10%, rgba(181, 140, 255, 0.4), transparent 62%);
+}
+[data-bank='zinli'] {
+  --card-grad: linear-gradient(135deg, #0a0f3a 0%, #2a1f9a 55%, #7a3df0 100%);
+  --card-accent: #9fb4ff;
+  --card-reflect: radial-gradient(50% 70% at 88% 10%, rgba(159, 180, 255, 0.4), transparent 62%);
+}
+[data-bank='binance'] {
+  --card-grad: linear-gradient(135deg, #0b0b0c 0%, #1e1a0b 55%, #3d3208 100%);
+  --card-accent: #f0b90b;
+  --card-reflect: radial-gradient(50% 70% at 88% 10%, rgba(240, 185, 11, 0.4), transparent 62%);
+}
+[data-bank='paypal'] {
+  --card-grad: linear-gradient(135deg, #00123a 0%, #003087 60%, #0070e0 100%);
+  --card-accent: #5cb4ff;
+  --card-reflect: radial-gradient(50% 70% at 88% 10%, rgba(92, 180, 255, 0.4), transparent 62%);
+}
+/* Modo claro: acabado prismático titanio sobre el color del banco */
+:root[data-theme='light'] [data-bank='generico'] {
+  --card-grad: linear-gradient(135deg, #cfd6e0 0%, #eef2f7 45%, #b9c3d2 100%);
+  --card-fg: #0f172a;
+  --card-accent: #0284c7;
+  --card-reflect: radial-gradient(50% 70% at 88% 10%, rgba(99, 102, 241, 0.25), transparent 60%),
+    radial-gradient(50% 60% at 5% 100%, rgba(2, 132, 199, 0.22), transparent 60%);
+}
+
+/* ───────── Tarjeta virtual ───────── */
+.vcard-scene {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  perspective: 1000px;
+}
+.vcard {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.586 / 1;
+  transform-style: preserve-3d;
+  transition: transform 0.8s var(--ease);
+}
+.vcard.flipped {
+  transform: rotateY(180deg);
+}
+.vcard-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 18px 16px;
+  border-radius: 22px;
+  color: var(--card-fg);
+  background: var(--card-reflect), var(--card-grad);
+  border: 1px solid color-mix(in srgb, var(--card-accent) 40%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--card-accent) 25%, transparent), var(--shadow);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  overflow: hidden;
+  transition: background 0.5s var(--ease), box-shadow 0.5s var(--ease), border-color 0.5s;
+}
+.vcard-back {
+  transform: rotateY(180deg);
+  padding: 0;
+  justify-content: flex-start;
+  gap: 14px;
+}
+/* Reflejo holográfico que recorre la cara */
+.vcard-shine {
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 30%,
+    rgba(255, 255, 255, 0.16) 36%,
+    rgba(0, 242, 254, 0.14) 42%,
+    rgba(139, 92, 246, 0.14) 48%,
+    transparent 56% 100%
+  );
+  animation: holo 7s linear infinite;
+  pointer-events: none;
+}
+@keyframes holo {
+  to {
+    transform: rotate(360deg);
+  }
+}
+:root[data-theme='light'] .vcard-front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(180, 200, 255, 0.28) 55%,
+    rgba(255, 255, 255, 0.45) 100%
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.vcard-face > * {
+  position: relative;
+}
+.vcard-face > .vcard-shine {
+  position: absolute;
+}
+
+.vcard-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 92px; /* espacio para los botones de la esquina */
+}
+.vcard-bank {
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vcard-mid {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.vcard-nfc {
+  margin-left: auto;
+  opacity: 0.85;
+  transform: rotate(90deg);
+}
+.chip-emv {
+  width: 46px;
+  height: 34px;
+  display: grid;
+  grid-template: 1fr 1fr / 1fr 1fr;
+  border-radius: 7px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f5e3a0, #c9a24a 55%, #f1d98a);
+  box-shadow: inset 0 0 0 1px rgba(90, 65, 10, 0.55);
+}
+.chip-emv i {
+  border: 1px solid rgba(90, 65, 10, 0.5);
+  border-radius: 3px;
+  margin: 2px;
+}
+.vcard-pm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  background: rgba(16, 231, 166, 0.2);
+  border: 1px solid rgba(16, 231, 166, 0.55);
+  color: #7dffd6;
+}
+:root[data-theme='light'] [data-bank='generico'] .vcard-pm {
+  color: #047857;
+  background: rgba(5, 150, 105, 0.15);
+  border-color: rgba(5, 150, 105, 0.5);
+}
+.vcard-number {
+  font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: clamp(1.05rem, 5.2vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+.vcard-number-cuenta {
+  font-size: clamp(0.8rem, 4.2vw, 1.02rem);
+  letter-spacing: 0.04em;
+}
+:root[data-theme='light'] [data-bank='generico'] .vcard-number {
+  text-shadow: none;
+}
+.vcard-bottom {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+.vcard-holder {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+.vcard-holder strong,
+.vcard-exp strong {
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vcard-label {
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.vcard-exp {
+  display: grid;
+}
+.vcard-side {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+.vcard-cur {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--card-fg) 45%, transparent);
+}
+
+/* Marcas de red */
+.net-visa {
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+.net-mc {
+  display: inline-flex;
+}
+.net-mc i {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #eb001b;
+}
+.net-mc i + i {
+  margin-left: -9px;
+  background: #f79e1b;
+  mix-blend-mode: hard-light;
+}
+.net-mc.maestro i {
+  background: #0099df;
+}
+.net-mc.maestro i + i {
+  background: #eb001b;
+}
+
+/* Reverso */
+.vcard-stripe {
+  height: 20%;
+  margin-top: 8%;
+  background: #05070b;
+}
+.vcard-sign {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0 16px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: repeating-linear-gradient(135deg, #f1f5f9 0 6px, #e2e8f0 6px 12px);
+}
+.vcard-sign-line {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 10px;
+  font-family: 'Brush Script MT', 'Segoe Script', cursive;
+  font-size: 1rem;
+  color: #334155;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vcard-cvv {
+  padding: 10px 12px;
+  background: #fff;
+  color: #0f172a;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+.vcard-fine {
+  margin: 0 16px;
+  font-size: 0.625rem;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+.vcard-back-bank {
+  position: absolute !important;
+  right: 16px;
+  bottom: 12px;
+  max-width: 50%;
+  opacity: 0.85;
+  font-size: 0.875rem;
+}
+
+/* Botones de la esquina (privacidad / girar) */
+.vcard-actions {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: flex;
+  gap: 2px;
+}
+.vcard-btn {
+  width: 44px;
+  height: 44px;
+  color: var(--card-fg);
+  background: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.vcard-btn:hover {
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--card-fg);
+}
+.vcard-scene:has([data-bank='generico']) .vcard-btn {
+  color: #f8fafc;
+}
+:root[data-theme='light'] .vcard-scene:has([data-bank='generico']) .vcard-btn {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
+/* ───────── Formulario ───────── */
+.add-card .section-head {
+  gap: 4px;
+}
+.add-title {
+  flex: 1;
+  text-align: center;
+  font-size: 1.25rem;
+}
+.add-spacer {
+  width: 48px;
+}
+.field-block {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+fieldset.field-block legend {
+  padding: 0;
+  margin-bottom: 8px;
+}
+.field-block .field-label {
+  font-weight: 600;
+}
+.field-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--success);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.field-error {
+  color: var(--danger);
+  font-size: 0.8125rem;
+}
+.field-block.has-error .input,
+.field-block.has-error .field-icon {
+  border-color: var(--danger);
+}
+.input.mono {
+  font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
+  letter-spacing: 0.06em;
+}
+.input.money {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+select.input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+.field-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 14px;
+  color: var(--text-2);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field-icon:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent), var(--glow);
+}
+.field-icon input {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--text);
+}
+:root[data-theme='light'] .input,
+:root[data-theme='light'] .field-icon {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+.instrument-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.select-bare {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--text);
+  appearance: none;
+  -webkit-appearance: none;
+}
+.select-bare option {
+  background: var(--surface);
+  color: var(--text);
+}
+.vcard-number[data-ident='true'] {
+  font-size: clamp(0.9rem, 4.4vw, 1.1rem);
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.instrument {
+  min-height: 72px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 6px;
+  padding: 8px 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-2);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: transform 0.15s var(--ease), border-color 0.2s, color 0.2s, background-color 0.2s;
+}
+.instrument:active {
+  transform: scale(0.96);
+}
+.instrument.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: var(--glow);
+}
+.doc-row {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 8px;
+}
+.exp-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 8px;
+}
+.cvv-field {
+  grid-column: 1 / -1;
+}
+.cvv-input {
+  letter-spacing: 0.2em;
+  -webkit-text-security: disc;
+}
+.phone-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 8px;
+}
+.seg-accent {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+}
+.seg:disabled {
+  opacity: 0.4;
+}
+.privacy-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  background: color-mix(in srgb, var(--success) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--success) 28%, transparent);
+}
+.privacy-note svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--success);
+}
+
+/* Micro-interacción háptica del botón de guardar */
+.btn-haptic {
+  position: relative;
+  overflow: hidden;
+}
+.btn-haptic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.55), transparent 60%);
+  opacity: 0;
+  transform: scale(0.2);
+}
+.btn-haptic:active:not(:disabled) {
+  transform: scale(0.96);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+.btn-haptic:active:not(:disabled)::after {
+  animation: ripple 0.5s var(--ease);
+}
+.btn-haptic.saved {
+  background: var(--success);
+  color: #04130d;
+  animation: thump 0.5s var(--ease);
+}
+@keyframes ripple {
+  from {
+    opacity: 1;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+@keyframes thump {
+  30% {
+    transform: scale(0.96);
+  }
+  60% {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vcard {
+    transition: none;
+  }
+  .vcard-shine {
+    animation: none;
+  }
+}
+
+/* La tarjeta queda visible mientras se llena el formulario (así se ve el giro del CVV) */
+@media (min-height: 700px) {
+  .add-card .vcard-scene {
+    position: sticky;
+    top: calc(env(safe-area-inset-top) + 76px);
+    z-index: 10;
+  }
+}
+
+/* Tarjetas del carrusel de Finanzas con el tema del banco */
+.bank-card[data-bank] {
+  color: var(--card-fg);
+  background: var(--card-reflect, none), var(--card-grad);
+  border: 1px solid color-mix(in srgb, var(--card-accent) 40%, transparent);
+}
+.bank-card[data-bank] .card-tool {
+  color: var(--card-fg);
+}
+:root[data-theme='light'] .bank-card[data-bank='generico'] .card-tool {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
+.privacy-note.note-info {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.privacy-note.note-info svg {
+  color: var(--accent);
+}
