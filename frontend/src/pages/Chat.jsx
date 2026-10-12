@@ -21,6 +21,14 @@ function urlAudio(path) {
 }
 
 const BARRAS = 28
+const MAX_SEGUNDOS = 60 // la grabación se detiene sola
+const MIN_MS = 1000 // menos de esto se descarta (toque accidental)
+
+/** Formato de audio que este navegador sabe grabar (webm en Android/Chrome, mp4 en iPhone). */
+function formatoSoportado() {
+  const candidatos = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus']
+  return candidatos.find((t) => window.MediaRecorder?.isTypeSupported?.(t)) ?? ''
+}
 
 function Onda({ activa }) {
   return (
@@ -132,6 +140,8 @@ export default function Chat() {
   const [accionOcupada, setAccionOcupada] = useState(null)
   const recorder = useRef(null)
   const trozos = useRef([])
+  const descartar = useRef(false)
+  const inicio = useRef(0)
   const stream = useRef(null)
   const fin = useRef(null)
 
@@ -168,6 +178,12 @@ export default function Chat() {
     const id = setInterval(() => setSegundos((s) => s + 1), 1000)
     return () => clearInterval(id)
   }, [grabando])
+
+  // Límite de duración: se detiene y se envía solo.
+  useEffect(() => {
+    if (grabando && segundos >= MAX_SEGUNDOS) detenerGrabacion()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grabando, segundos])
 
   useEffect(
     () => () => {
@@ -239,31 +255,57 @@ export default function Chat() {
       setError('El micrófono requiere HTTPS (o localhost). Abre la app con una conexión segura.')
       return
     }
+    if (typeof window.MediaRecorder === 'undefined') {
+      setError('Este navegador no permite grabar audio. Escríbeme el mensaje.')
+      return
+    }
     try {
-      stream.current = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const rec = new MediaRecorder(stream.current)
+      stream.current = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true },
+      })
+      const tipo = formatoSoportado()
+      const rec = new MediaRecorder(stream.current, tipo ? { mimeType: tipo } : undefined)
       trozos.current = []
+      descartar.current = false
       rec.ondataavailable = (e) => e.data.size && trozos.current.push(e.data)
       rec.onstop = async () => {
         stream.current?.getTracks().forEach((t) => t.stop())
-        const blob = new Blob(trozos.current, { type: rec.mimeType || 'audio/webm' })
-        if (!blob.size || !conversacion) return
-        const ext = blob.type.includes('mp4') ? 'm4a' : 'webm'
+        if (descartar.current || !conversacion) return
+        if (Date.now() - inicio.current < MIN_MS) {
+          setError('La grabación fue muy corta. Mantén el micrófono un poco más.')
+          return
+        }
+        const blob = new Blob(trozos.current, { type: rec.mimeType || tipo || 'audio/webm' })
+        if (!blob.size) return
+        const ext = blob.type.includes('mp4') ? 'm4a' : blob.type.includes('ogg') ? 'ogg' : 'webm'
         const fd = new FormData()
         fd.append('audio', blob, `voz-${Date.now()}.${ext}`)
-        await enviar(fd)
+        await enviar(fd, '🎤 Audio enviado · transcribiendo…')
       }
       rec.start()
+      inicio.current = Date.now()
       recorder.current = rec
       setSegundos(0)
       setGrabando(true)
-    } catch {
-      setError('No se pudo acceder al micrófono. Revisa el permiso del navegador.')
+    } catch (err) {
+      setError(
+        err?.name === 'NotAllowedError'
+          ? 'Permiso de micrófono denegado. Habilítalo en los ajustes del navegador.'
+          : err?.name === 'NotFoundError'
+            ? 'No se encontró ningún micrófono.'
+            : 'No se pudo acceder al micrófono.',
+      )
     }
   }
 
   function detenerGrabacion() {
-    recorder.current?.stop()
+    if (recorder.current?.state === 'recording') recorder.current.stop()
+    setGrabando(false)
+  }
+
+  function cancelarGrabacion() {
+    descartar.current = true
+    if (recorder.current?.state === 'recording') recorder.current.stop()
     setGrabando(false)
   }
 
@@ -289,11 +331,18 @@ export default function Chat() {
             backend/.env y reinicia el servidor.
           </div>
         )}
+        {ia?.configurada && ia.voz === false && (
+          <div className="chat-notice">
+            <Info size={16} aria-hidden="true" />
+            Para hablarme necesitas GROQ_API_KEY en backend/.env (la voz usa Whisper de Groq).
+          </div>
+        )}
         {ia?.configurada && mensajes.length === 0 && !cargando && (
           <div className="chat-notice">
             <Info size={16} aria-hidden="true" />
             Pregúntame por tus saldos o movimientos, o pídeme registrar un gasto o crear un evento.
-            Antes de crear, editar o eliminar algo, siempre te pediré confirmación.
+            Puedes escribirme o tocar el micrófono y hablarme. Antes de crear, editar o eliminar
+            algo, siempre te pediré confirmación.
           </div>
         )}
 
@@ -311,6 +360,7 @@ export default function Chat() {
               )}
               <div className={mio ? 'bubble me' : 'bubble luz'}>
                 {audio && <ReproductorAudio src={audio} />}
+                {m.transcripcion && !m.texto && <span className="voz-etiqueta">Lo que entendí</span>}
                 {(m.texto || m.transcripcion) && (
                   <p>
                     <Texto>{m.texto || m.transcripcion}</Texto>
@@ -355,6 +405,14 @@ export default function Chat() {
       <form className="composer glass" onSubmit={enviarTexto}>
         {grabando ? (
           <div className="recording" role="status">
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={cancelarGrabacion}
+              aria-label="Cancelar grabación"
+            >
+              <X size={20} aria-hidden="true" />
+            </button>
             <span className="rec-dot" aria-hidden="true" />
             <Onda activa />
             <span className="rec-time">{mmss}</span>

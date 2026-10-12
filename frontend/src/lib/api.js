@@ -2,8 +2,12 @@ import axios from 'axios'
 
 // Si VITE_API_URL no está definida, el backend se asume en el mismo host que sirve la app,
 // puerto 8000. Así funciona igual desde localhost y desde la IP de la red local (teléfono).
+// En HTTPS (npm run dev:https) la API se sirve por el mismo origen vía proxy de Vite.
 const API_URL =
-  import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:8000/api`
+  import.meta.env.VITE_API_URL ||
+  (window.location.protocol === 'https:'
+    ? '/api'
+    : `${window.location.protocol}//${window.location.hostname}:8000/api`)
 
 export const api = axios.create({ baseURL: API_URL })
 

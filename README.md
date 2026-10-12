@@ -65,6 +65,24 @@ Seguridad:
 - Los datos que se envían al proveedor son solo los necesarios (sin documento, correo ni titular).
 - Las herramientas viven en `backend/chat/herramientas.py`; el bucle del agente en `chat/agente.py`.
 
+## Voz de entrada (fase 2)
+
+Toca el micrófono del chat y háblale a Luz: el audio se transcribe con **Whisper (Groq)**, el texto
+entra al mismo agente y toda acción de escritura sigue pidiendo confirmación. Usa el mismo
+`GROQ_API_KEY`; el modelo se cambia con `GROQ_STT_MODEL` (por defecto `whisper-large-v3-turbo`).
+
+- Grabación máx. 60 s, cancelable; los audios largos (>10 MB) se rechazan (`VOZ_MAX_MB`).
+- El audio se guarda en `backend/media/` (ignorado por git) y se muestra "Lo que entendí".
+- **Micrófono en el teléfono:** los navegadores exigen HTTPS fuera de `localhost`. Usa:
+
+  ```bash
+  cd frontend
+  npm run dev:https      # https://<IP-de-tu-PC>:5173  (certificado autofirmado: acéptalo una vez)
+  ```
+
+  Ese modo sirve la API por el mismo origen (proxy a Django), así que no hay contenido mixto.
+  También habilita instalar la PWA y copiar al portapapeles.
+
 ## Notas seguras (cifradas)
 
 Las notas ancladas a una cuenta (claves, preguntas de seguridad) se guardan **cifradas**

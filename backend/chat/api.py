@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.utils import timezone
@@ -72,11 +73,16 @@ class ConversacionViewSet(ServiceViewSet):
     def mensajes(self, request, pk=None):
         conversacion = self.get_object()
         if request.method == "POST":
+            audio = request.FILES.get("audio")
+            if audio is not None and audio.size > settings.VOZ_MAX_MB * 1024 * 1024:
+                return Response(
+                    {"audio": [f"El audio supera el máximo de {settings.VOZ_MAX_MB} MB."]}, status=400
+                )
             mensaje, respuesta = MensajeService.enviar(
                 request.user,
                 conversacion,
                 texto=request.data.get("texto", ""),
-                audio=request.FILES.get("audio"),
+                audio=audio,
             )
             return Response({"mensajes": serializar_mensajes([mensaje, respuesta])}, status=201)
         return Response(serializar_mensajes(conversacion.mensajes.all()))
@@ -167,4 +173,6 @@ class AccionPendienteViewSet(viewsets.ViewSet):
 @api_view(["GET"])
 def estado_ia(request):
     """Qué proveedores de IA están configurados (sin exponer llaves)."""
-    return Response(proveedores.estado())
+    from . import voz
+
+    return Response({**proveedores.estado(), "voz": voz.disponible()})

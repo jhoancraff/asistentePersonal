@@ -410,10 +410,11 @@ def _preparar_crear_movimiento(usuario, a):
         "fecha": fecha.isoformat(),
     }
     verbo = "gasto" if tipo == "gasto" else "ingreso"
+    nueva = bool(cat) and not CategoriaService.listar(usuario).filter(nombre__iexact=cat).exists()
     resumen = (
         f"Registrar un {verbo} de {_dinero(monto, cuenta.moneda)} en «{cuenta.nombre}»"
         + (f" — {desc}" if desc else "")
-        + (f" · categoría {cat}" if cat else "")
+        + (f" · categoría {cat}{' (nueva)' if nueva else ''}" if cat else "")
         + f" ({_fecha_legible(fecha)})"
     )
     return params, resumen

@@ -1881,3 +1881,17 @@ textarea.input {
   flex-wrap: wrap;
   overflow: visible;
 }
+
+/* ───────── Voz ───────── */
+.voz-etiqueta {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.recording .icon-btn {
+  width: 40px;
+  height: 40px;
+  color: var(--danger);
+}
