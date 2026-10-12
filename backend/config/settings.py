@@ -121,9 +121,10 @@ FIELD_ENCRYPTION_KEYS = config("FIELD_ENCRYPTION_KEYS", default="")
 # si uno falla (límite, red, región) se usa el siguiente. Ambos hablan el formato OpenAI.
 IA_PROVEEDORES = config("IA_PROVEEDORES", default="groq,gemini", cast=Csv())
 GROQ_API_KEY = config("GROQ_API_KEY", default="")
-GROQ_MODEL = config("GROQ_MODEL", default="llama-3.3-70b-versatile")
+GROQ_MODEL = config("GROQ_MODEL", default="openai/gpt-oss-120b")
 GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
-GEMINI_MODEL = config("GEMINI_MODEL", default="gemini-2.5-flash")
+# Si Google retira el modelo, el error 404 lo indica; `manage.py probar_ia` lista los vigentes.
+GEMINI_MODEL = config("GEMINI_MODEL", default="gemini-3.5-flash")
 # Opcional: otra URL compatible con OpenAI (proxy, pruebas). Vacío = la oficial.
 GROQ_BASE_URL = config("GROQ_BASE_URL", default="")
 GEMINI_BASE_URL = config("GEMINI_BASE_URL", default="")

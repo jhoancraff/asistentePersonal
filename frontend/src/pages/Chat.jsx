@@ -67,6 +67,18 @@ const ETIQUETA_ESTADO = {
 }
 
 /** Tarjeta de una acción propuesta por Luz: se ejecuta solo si el usuario confirma. */
+/** Texto del asistente: respeta **negritas** sin interpretar HTML (React escapa todo). */
+function Texto({ children }) {
+  const partes = String(children).split(/(\*\*[^*]+\*\*)/g)
+  return partes.map((p, i) =>
+    p.startsWith('**') && p.endsWith('**') && p.length > 4 ? (
+      <strong key={i}>{p.slice(2, -2)}</strong>
+    ) : (
+      p
+    ),
+  )
+}
+
 function Accion({ accion, ocupada, onConfirmar, onCancelar }) {
   const pendiente = accion.estado === 'pendiente'
   const exito = accion.estado === 'confirmada'
@@ -299,7 +311,11 @@ export default function Chat() {
               )}
               <div className={mio ? 'bubble me' : 'bubble luz'}>
                 {audio && <ReproductorAudio src={audio} />}
-                {(m.texto || m.transcripcion) && <p>{m.texto || m.transcripcion}</p>}
+                {(m.texto || m.transcripcion) && (
+                  <p>
+                    <Texto>{m.texto || m.transcripcion}</Texto>
+                  </p>
+                )}
                 {Array.isArray(m.acciones) &&
                   m.acciones.map((a) => (
                     <Accion

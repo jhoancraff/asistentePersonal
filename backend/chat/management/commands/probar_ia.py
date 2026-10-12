@@ -20,8 +20,22 @@ HERRAMIENTA_PRUEBA = [
 ]
 
 
+EXCLUIR = ("whisper", "tts", "embedding", "image", "guard", "safeguard", "orpheus", "veo",
+           "lyria", "live", "transcribe", "robotics", "aqa", "antigravity", "research", "nano")
+
+
 class Command(BaseCommand):
     help = "Verifica cada proveedor de IA configurado: conexión, región y tool calling."
+
+    def _sugerir_modelos(self, p):
+        ids = [m for m in proveedores.modelos(p) if m and not any(x in m for x in EXCLUIR)]
+        if ids:
+            self.stdout.write(
+                "    Modelos de texto disponibles con tu llave (ajusta "
+                f"{'GROQ_MODEL' if p['id'] == 'groq' else 'GEMINI_MODEL'} en backend/.env):"
+            )
+            for m in ids[:15]:
+                self.stdout.write(f"      - {m}")
 
     def handle(self, *args, **opts):
         lista = proveedores.configurados()
@@ -44,6 +58,8 @@ class Command(BaseCommand):
                     r = proveedores._llamar(p, msgs, tools)
                 except proveedores.ErrorProveedor as exc:
                     self.stdout.write(self.style.ERROR(f"  ✗ {nombre}: {exc}"))
+                    if "(404)" in str(exc) or "(400)" in str(exc):
+                        self._sugerir_modelos(p)
                     continue
                 ms = int((time.time() - t0) * 1000)
                 if tools and not r["llamadas"]:

@@ -353,8 +353,12 @@ function MovimientoSheet({ open, onClose, cuentas, categorias, cuentaInicial, on
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
 
-  const monedaSel = cuentas.find((c) => c.id === cuentaId)?.moneda ?? 'VES'
+  // Cuentas elegibles: las activas (y la que ya venía seleccionada, aunque esté inactiva).
+  const elegibles = cuentas.filter((c) => c.activa !== false || c.id === cuentaInicial)
+  const cuentaSel = cuentas.find((c) => c.id === cuentaId)
+  const monedaSel = cuentaSel?.moneda ?? 'VES'
   const decimales = decimalesMoneda(monedaSel)
+  const categoriaSel = cats.find((c) => c.id === categoriaId)
   const tecla = (t) =>
     setDigitos((d) => {
       if (t === 'del') return d.slice(0, -1)
@@ -421,39 +425,69 @@ function MovimientoSheet({ open, onClose, cuentas, categorias, cuentaInicial, on
 
       <div className={`amount ${tipo === 'ingreso' ? 'c-success' : 'c-danger'}`}>{formatMoney(monto, monedaSel)}</div>
 
-      <div className="chips" aria-label="Cuenta">
-        {cuentas.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            className={c.id === cuentaId ? 'chip active' : 'chip'}
-            onClick={() => setCuentaId(c.id)}
-          >
-            {c.nombre}
-          </button>
-        ))}
-      </div>
-
-      <div className="chips" aria-label="Categoría">
-        {cats.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            className={c.id === categoriaId ? 'chip active' : 'chip'}
-            onClick={() => setCategoriaId(c.id === categoriaId ? null : c.id)}
-          >
-            {c.nombre}
-          </button>
-        ))}
-      </div>
-      <div className="inline-add">
-        <input
+      <label className="field-block">
+        <span className="field-label">Cuenta</span>
+        <select
           className="input"
-          placeholder="Nueva categoría"
-          value={nuevaCat}
-          onChange={(e) => setNuevaCat(e.target.value)}
-        />
-        <ActionButton variant="ghost" icon={Plus} onClick={agregarCategoria} disabled={!nuevaCat.trim()} aria-label="Agregar categoría" />
+          value={cuentaId ?? ''}
+          onChange={(e) => setCuentaId(Number(e.target.value))}
+        >
+          {elegibles.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.nombre} · {c.moneda}
+              {c.cuenta_madre ? ' · tarjeta afiliada' : ''}
+            </option>
+          ))}
+        </select>
+        {cuentaSel && (
+          <span className="muted">
+            Saldo disponible: {formatMoney(cuentaSel.saldo, cuentaSel.moneda)}
+          </span>
+        )}
+      </label>
+
+      <div className="field-block">
+        <span className="field-label">
+          Categoría{categoriaSel ? `: ${categoriaSel.nombre}` : ' (opcional)'}
+        </span>
+        {cats.length > 0 ? (
+          <div className="chips wrap" role="group" aria-label="Categoría">
+            {cats.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className={c.id === categoriaId ? 'chip active' : 'chip'}
+                aria-pressed={c.id === categoriaId}
+                onClick={() => setCategoriaId(c.id === categoriaId ? null : c.id)}
+              >
+                {c.nombre}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="muted">Aún no tienes categorías. Crea la primera aquí abajo.</p>
+        )}
+        <div className="inline-add">
+          <input
+            className="input"
+            placeholder="Nueva categoría"
+            value={nuevaCat}
+            onChange={(e) => setNuevaCat(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                agregarCategoria()
+              }
+            }}
+          />
+          <ActionButton
+            variant="ghost"
+            icon={Plus}
+            onClick={agregarCategoria}
+            disabled={!nuevaCat.trim()}
+            aria-label="Agregar categoría"
+          />
+        </div>
       </div>
 
       <div className="grid-2">

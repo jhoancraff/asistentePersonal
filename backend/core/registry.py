@@ -60,8 +60,11 @@ def nombre_desde_modelo(nombre: str) -> str:
     return nombre.replace("__", ".")
 
 
-def herramientas_openai() -> list[dict]:
-    """Catálogo en el formato de 'tools' compatible con OpenAI (Groq, Gemini…)."""
+def herramientas_openai(nombres=None) -> list[dict]:
+    """Catálogo en el formato de 'tools' compatible con OpenAI (Groq, Gemini…).
+
+    `nombres`: si se indica, solo esas acciones (menos tokens por llamada).
+    """
     return [
         {
             "type": "function",
@@ -72,6 +75,7 @@ def herramientas_openai() -> list[dict]:
             },
         }
         for a in ACCIONES.values()
+        if nombres is None or a.nombre in nombres
     ]
 
 

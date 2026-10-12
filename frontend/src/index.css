@@ -129,6 +129,10 @@ button {
   color: var(--text-2);
   font-size: 0.875rem;
 }
+.bubble p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .eyebrow {
   color: var(--text-2);
   font-size: 0.75rem;
@@ -1867,4 +1871,13 @@ textarea.input {
     transform: translateY(-5px);
     opacity: 1;
   }
+}
+
+/* ───────── Hoja "Nuevo movimiento": todo alcanzable, sin filas ocultas ───────── */
+.sheet-body > * {
+  min-width: 0;
+}
+.chips.wrap {
+  flex-wrap: wrap;
+  overflow: visible;
 }

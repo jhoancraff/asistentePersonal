@@ -33,6 +33,21 @@ def _num(valor, decimales=2) -> str:
     return texto.replace(",", "§").replace(".", ",").replace("§", ".")
 
 
+FIAT_2_DECIMALES = ("VES", "USD", "EUR", "COP", "MXN", "ARS", "BRL", "CLP", "PEN", "GBP", "CAD")
+
+
+def _cant(valor, moneda) -> str:
+    """Monto para el modelo: sin ceros de relleno que confundan (45.00, nunca 45.00000000).
+
+    Fiat con 2 decimales; cripto hasta 8 sin ceros finales. Siempre punto decimal.
+    """
+    v = Decimal(valor)
+    if moneda in FIAT_2_DECIMALES:
+        return str(v.quantize(Decimal("0.01")))
+    texto = format(v.quantize(Decimal("0.00000001")), "f").rstrip("0").rstrip(".")
+    return texto or "0"
+
+
 def _dinero(valor, moneda) -> str:
     v = Decimal(valor)
     if moneda == "VES":
@@ -166,6 +181,15 @@ def _fecha_legible(d: date) -> str:
     return d.strftime("%d/%m/%Y")
 
 
+def _de_fecha(d: date) -> str:
+    """«de hoy», «de ayer» o «del 05/10/2026» (con la preposición correcta)."""
+    if d == _hoy():
+        return "de hoy"
+    if d == _hoy() - timedelta(days=1):
+        return "de ayer"
+    return f"del {d.strftime('%d/%m/%Y')}"
+
+
 def _hora_legible(dt: datetime) -> str:
     return timezone.localtime(dt).strftime("%d/%m/%Y %H:%M")
 
@@ -186,7 +210,7 @@ def listar_cuentas(usuario):
             "institucion": c.banco,
             "tipo": c.tipo,
             "moneda": c.moneda,
-            "saldo": str(CuentaService.saldo(usuario, c.id).quantize(Decimal("0.01"))),
+            "saldo": _cant(CuentaService.saldo(usuario, c.id), c.moneda),
             "activa": c.activa,
         }
         if c.ultimos_digitos:
@@ -211,7 +235,7 @@ def saldo_cuenta(usuario, cuenta):
     return {
         "cuenta": c.nombre,
         "moneda": c.moneda,
-        "saldo": str(CuentaService.saldo(usuario, c.id).quantize(Decimal("0.01"))),
+        "saldo": _cant(CuentaService.saldo(usuario, c.id), c.moneda),
     }
 
 
@@ -252,7 +276,7 @@ def listar_movimientos(usuario, cuenta=None, desde=None, hasta=None, tipo=None, 
                 "id": m.id,
                 "fecha": m.fecha.isoformat(),
                 "tipo": m.tipo,
-                "monto": str(m.monto.quantize(Decimal("0.01"))),
+                "monto": _cant(m.monto, m.cuenta.moneda),
                 "moneda": m.cuenta.moneda,
                 "descripcion": m.descripcion,
                 "categoria": m.categoria.nombre if m.categoria_id else None,
@@ -294,16 +318,19 @@ def resumen_periodo(usuario, desde=None, hasta=None):
         .order_by("-total")[:8]
     ):
         categorias.setdefault(fila["cuenta__moneda"], []).append(
-            {"categoria": fila["categoria__nombre"] or "Sin categoría", "total": str(fila["total"])}
+            {
+                "categoria": fila["categoria__nombre"] or "Sin categoría",
+                "total": _cant(fila["total"], fila["cuenta__moneda"]),
+            }
         )
     return {
         "desde": d.isoformat(),
         "hasta": h.isoformat(),
         "por_moneda": {
             m: {
-                "ingresos": str(v["ingresos"]),
-                "gastos": str(v["gastos"]),
-                "neto": str(v["ingresos"] - v["gastos"]),
+                "ingresos": _cant(v["ingresos"], m),
+                "gastos": _cant(v["gastos"], m),
+                "neto": _cant(v["ingresos"] - v["gastos"], m),
             }
             for m, v in por_moneda.items()
         },
@@ -442,7 +469,7 @@ def _preparar_editar_movimiento(usuario, a):
         partes.append(f"categoría {cambios['categoria']}")
     if not cambios:
         raise ValueError("No indicaste qué cambiar (monto, descripción, fecha o categoría).")
-    actual = f"{mov.tipo} de {_dinero(mov.monto, mov.cuenta.moneda)} del {_fecha_legible(mov.fecha)}"
+    actual = f"{mov.tipo} de {_dinero(mov.monto, mov.cuenta.moneda)} {_de_fecha(mov.fecha)}"
     resumen = f"Editar el {actual} en «{mov.cuenta.nombre}»: " + ", ".join(partes)
     return {"id": mov.id, **cambios}, resumen
 
@@ -483,7 +510,7 @@ def _preparar_eliminar_movimiento(usuario, a):
     mov = _movimiento(usuario, a.get("id"))
     resumen = (
         f"Eliminar el {mov.tipo} de {_dinero(mov.monto, mov.cuenta.moneda)} "
-        f"del {_fecha_legible(mov.fecha)} en «{mov.cuenta.nombre}»"
+        f"{_de_fecha(mov.fecha)} en «{mov.cuenta.nombre}»"
         + (f" ({mov.descripcion})" if mov.descripcion else "")
     )
     return {"id": mov.id}, resumen
