@@ -17,7 +17,7 @@ import { hora } from '../lib/format'
 
 function urlAudio(path) {
   if (!path) return null
-  return /^https?:/.test(path) ? path : `${backendOrigin()}${path}`
+  return new URL(path, backendOrigin()).pathname.replace(/^\/api\//, '')
 }
 
 const BARRAS = 28
@@ -43,6 +43,31 @@ function Onda({ activa }) {
 function ReproductorAudio({ src }) {
   const ref = useRef(null)
   const [sonando, setSonando] = useState(false)
+  const [audioSrc, setAudioSrc] = useState('')
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    let cancelado = false
+    let objectUrl
+
+    api
+      .get(src, { responseType: 'blob' })
+      .then(({ data }) => {
+        if (!cancelado) {
+          objectUrl = URL.createObjectURL(data)
+          setAudioSrc(objectUrl)
+        }
+      })
+      .catch(() => {
+        if (!cancelado) setError(true)
+      })
+
+    return () => {
+      cancelado = true
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+    }
+  }, [src])
+
   function alternar() {
     const a = ref.current
     if (!a) return
@@ -51,18 +76,25 @@ function ReproductorAudio({ src }) {
   }
   return (
     <div className="audio-player">
-      <button type="button" className="play" onClick={alternar} aria-label={sonando ? 'Pausar' : 'Reproducir'}>
+      <button
+        type="button"
+        className="play"
+        onClick={alternar}
+        aria-label={sonando ? 'Pausar' : 'Reproducir'}
+        disabled={!audioSrc}
+      >
         {sonando ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
       </button>
       <Onda activa={sonando} />
       <audio
         ref={ref}
-        src={src}
+        src={audioSrc}
         preload="none"
         onPlay={() => setSonando(true)}
         onPause={() => setSonando(false)}
         onEnded={() => setSonando(false)}
       />
+      {error && <span role="alert">No se pudo cargar el audio.</span>}
     </div>
   )
 }

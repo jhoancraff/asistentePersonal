@@ -1,9 +1,13 @@
 import json
 import logging
+import mimetypes
 
 from django.conf import settings
+from django.http import FileResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action, api_view
@@ -22,6 +26,8 @@ log = logging.getLogger(__name__)
 
 
 class MensajeSerializer(AuditSerializer):
+    audio = serializers.SerializerMethodField()
+
     class Meta(AuditSerializer.Meta):
         model = Mensaje
         read_only_fields = AuditSerializer.Meta.read_only_fields + (
@@ -29,6 +35,28 @@ class MensajeSerializer(AuditSerializer):
             "transcripcion",
             "acciones",
         )
+
+    def get_audio(self, mensaje):
+        if not mensaje.audio:
+            return None
+        return reverse("chat-audio", kwargs={"mensaje_id": mensaje.pk})
+
+
+@api_view(["GET"])
+def audio_mensaje(request, mensaje_id):
+    mensaje = get_object_or_404(
+        Mensaje.objects.select_related("conversacion"),
+        pk=mensaje_id,
+        conversacion__usuario=request.user,
+    )
+    if not mensaje.audio:
+        return Response(status=404)
+
+    content_type = mimetypes.guess_type(mensaje.audio.name)[0] or "application/octet-stream"
+    response = FileResponse(mensaje.audio.open("rb"), content_type=content_type)
+    response["Cache-Control"] = "private, no-store"
+    response["X-Content-Type-Options"] = "nosniff"
+    return response
 
 
 class ConversacionSerializer(AuditSerializer):

@@ -2,11 +2,41 @@
 .env
 .env.*
 !.env.example
+.envrc
 *.pem
 *.key
 *.p12
+*.pfx
+*.p7b
+*.p7c
+*.p8
+*.der
+*.crt
+*.cer
+*.jks
+*.keystore
 vapid_private*
 secrets/
+**/secrets/
+.ssh/
+.aws/
+.cloudflared/
+.kube/
+.netrc
+.npmrc
+.pypirc
+.pgpass
+id_rsa
+id_ed25519
+credentials.json
+*-credentials.json
+*credentials*.json
+service-account*.json
+service_account*.json
+cloudflared*.json
+*.secret
+*.secrets
+*.credentials
 
 # Python
 venv/
@@ -40,6 +70,11 @@ yarn-error.log*
 *.sql
 *.dump
 *.bak
+*.backup
+*.sqlite
+*.db
+*.tfstate
+*.tfstate.*
 
 # Editor / SO
 .idea/

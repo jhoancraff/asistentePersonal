@@ -1,0 +1,14 @@
+[Unit]
+Description=Luz Django application (Gunicorn)
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/asistentePersonal/backend
+ExecStart=/home/asistentePersonal/backend/venv/bin/gunicorn --bind 127.0.0.1:18000 --workers 3 --timeout 60 --access-logfile - --error-logfile - config.wsgi:application
+Restart=on-failure
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target
