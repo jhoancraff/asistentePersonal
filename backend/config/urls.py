@@ -15,4 +15,5 @@ urlpatterns = [
     path("api/notas/", include("notas.urls")),
     path("api/notificaciones/", include("notificaciones.urls")),
     path("api/chat/", include("chat.urls")),
+    path("api/correos/", include("correos.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

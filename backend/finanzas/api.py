@@ -84,8 +84,14 @@ class CategoriaSerializer(AuditSerializer):
 
 
 class MovimientoSerializer(AuditSerializer):
+    # True si lo registró automáticamente una notificación del banco (módulo correos).
+    automatico = serializers.SerializerMethodField()
+
     class Meta(AuditSerializer.Meta):
         model = Movimiento
+
+    def get_automatico(self, movimiento):
+        return hasattr(movimiento, "correo")
 
 
 class CuentaViewSet(ServiceViewSet):

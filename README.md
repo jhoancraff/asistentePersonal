@@ -94,6 +94,41 @@ con AES-256-GCM; la base de datos solo contiene `enc:v1:...`.
 - Rotación: pon la clave nueva primero (`k2:...,k1:...`) y ejecuta `python manage.py rotar_cifrado`.
 - Estas notas no se exponen al futuro agente de IA (no están registradas con `@accion`).
 
+## Correos bancarios (descuento automático)
+
+Un script de Google Apps Script en tu Gmail revisa cada minuto las notificaciones del banco y
+se las envía a Luz, que registra la **salida** en la cuenta correspondiente. Hoy soporta el
+Pago Móvil de Bancamiga (`no-reply@bancamiga.com`); otros bancos se agregan en
+`backend/correos/parsers.py`.
+
+**Cómo decide:** el remitente debe estar permitido y Gmail debe haber validado SPF/DKIM/DMARC;
+el texto se lee solo con patrones fijos (nunca con IA); la cuenta se identifica por banco y
+**últimos 4 dígitos** de la cuenta (`Cuenta.ultimos_digitos`); cada correo y cada referencia
+se registran una sola vez. Los movimientos creados así muestran «Desde correo del banco»;
+para deshacer uno, elimínalo: no se vuelve a registrar. No se guarda el contenido del correo.
+
+**Instalación (en el servidor donde corre Luz, accesible desde internet):**
+
+1. Crea tu llave (se muestra una sola vez; invalida la anterior):
+   `python manage.py crear_token_correo --usuario TU_USUARIO`
+2. En <https://script.google.com> crea un proyecto y pega `backend/correos/apps_script/luz_correos.gs`.
+3. En *Configuración del proyecto → Propiedades del script* agrega `LUZ_URL`
+   (`https://tu-dominio`) y `LUZ_TOKEN` (la llave). **No** las pongas en el código.
+4. Ejecuta `instalarDisparador` una vez y acepta los permisos de Gmail.
+5. Ejecuta `probar` y revisa el registro de ejecución. Los correos que no reconozca quedan con
+   la etiqueta de Gmail `Luz-revisar`.
+
+**¿Los correos del banco llegan a otra cuenta?** Luz no depende de ninguna cuenta de Google:
+instala el script en la cuenta que recibe los correos (con la misma llave; puedes tenerlo en
+varias cuentas). Si no puedes instalarlo ahí, crea en esa cuenta un **filtro** de Gmail
+(`from:no-reply@bancamiga.com` → *Reenviar a*) hacia un Gmail con el script; debe ser reenvío
+automático, no manual, para conservar el remitente y la firma del banco. Cada correo se
+identifica por su `Message-ID`, así que no se duplica aunque llegue por varias cuentas.
+
+Si Cloudflare bloquea al script (respuestas 403), crea una regla de WAF que omita la
+verificación de bots para `/api/correos/ingesta/`. Para pasar a otro banco o cambiar el
+remitente: `CORREO_REMITENTES_PERMITIDOS` en el `.env` y `REMITENTES` en el script.
+
 ## Probar desde el teléfono (misma red Wi-Fi)
 
 1. Averigua la IP de tu PC con `ipconfig` (ej. `192.168.X.X`).

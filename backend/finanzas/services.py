@@ -39,7 +39,7 @@ class MovimientoService(CrudService):
 
     @classmethod
     def listar(cls, usuario, **filtros):
-        return super().listar(usuario, **filtros).select_related("cuenta", "categoria")
+        return super().listar(usuario, **filtros).select_related("cuenta", "categoria", "correo")
 
 
 class ProveedorService(CrudService):

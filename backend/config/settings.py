@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "notas",
     "notificaciones",
     "chat",
+    "correos",
 ]
 
 MIDDLEWARE = [
@@ -104,6 +105,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 50,
+    "DEFAULT_THROTTLE_RATES": {"ingesta": "120/min"},
 }
 
 SIMPLE_JWT = {
@@ -143,3 +145,12 @@ VOZ_IDIOMA = config("VOZ_IDIOMA", default="es")
 VOZ_MAX_MB = config("VOZ_MAX_MB", default=10, cast=int)
 IA_MAX_PASOS = config("IA_MAX_PASOS", default=5, cast=int)
 ACCION_PENDIENTE_MINUTOS = config("ACCION_PENDIENTE_MINUTOS", default=15, cast=int)
+
+# Correos bancarios (script de Gmail → /api/correos/ingesta/). Solo se aceptan estos remitentes.
+CORREO_REMITENTES_PERMITIDOS = [
+    x.lower()
+    for x in config("CORREO_REMITENTES_PERMITIDOS", default="no-reply@bancamiga.com", cast=Csv())
+]
+# Exige que Gmail haya validado SPF/DKIM/DMARC del remitente (anti-suplantación).
+CORREO_EXIGIR_AUTENTICACION = config("CORREO_EXIGIR_AUTENTICACION", default=True, cast=bool)
+CORREO_MAX_CARACTERES = 20000

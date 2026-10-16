@@ -286,6 +286,7 @@ export default function Finanzas() {
                   <strong>{m.descripcion || catPorId[m.categoria]?.nombre || 'Movimiento'}</strong>
                   <span className="muted">
                     {fechaRelativa(m.fecha)}
+                    {m.automatico && ' · Desde correo del banco'}
                     {catPorId[m.categoria] && ` · ${catPorId[m.categoria].nombre}`}
                     {cuenta && m.cuenta !== cuenta.id && cuentaPorId[m.cuenta]
                       ? ` · ${cuentaPorId[m.cuenta].nombre}`
