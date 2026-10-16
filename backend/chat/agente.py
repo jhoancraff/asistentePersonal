@@ -39,6 +39,8 @@ PALABRAS = {
     "agenda": (
         "evento", "cita", "reunión", "reunion", "recordator", "agenda", "calendario", "agend",
         "mañana", "semana", "hora", "próxim", "proxim",
+        # Raíces para tolerar errores de dedo ("recordario") y formas verbales.
+        "record", "recuerd", "avis", "avís", "alarma", "a las ", "pm", "am ", "hoy",
     ),
     "notas": ("nota", "apunt", "anota", "lista"),
 }
@@ -63,6 +65,18 @@ _ANUNCIA_ACCION = re.compile(
 
 def _anuncia_accion(texto: str) -> bool:
     return bool(_ANUNCIA_ACCION.search(texto or ""))
+
+
+# El modelo dice que no puede hacer algo (suele ser que no se le ofreció la herramienta).
+_NO_PUEDE = re.compile(
+    r"no (dispongo|tengo|cuento)|no (me )?(es posible|puedo (crear|agregar|registrar|editar|eliminar|"
+    r"programar|guardar))|solo puedo (consultar|leer|ver)",
+    re.IGNORECASE,
+)
+
+
+def _dice_no_poder(texto: str) -> bool:
+    return bool(_NO_PUEDE.search(texto or ""))
 
 
 def _incluye_escritura(catalogo: list[dict]) -> bool:
@@ -244,7 +258,11 @@ def responder(usuario, conversacion, por_voz=False) -> Mensaje:
         texto = _ciclo(usuario, conversacion, list(base), catalogo, pendientes)
         # Red de seguridad: si el modelo dice que dejó una acción lista pero NO se le ofrecieron
         # herramientas de escritura (mensaje con vocabulario inesperado), se reintenta con todas.
-        if not pendientes and _anuncia_accion(texto) and not _incluye_escritura(catalogo):
+        # Lo mismo si dice que no puede (p. ej. se le dieron solo las herramientas de otra área).
+        sin_todas = len(catalogo) < len(registry.herramientas_openai())
+        if not pendientes and sin_todas and (
+            (_anuncia_accion(texto) and not _incluye_escritura(catalogo)) or _dice_no_poder(texto)
+        ):
             texto = _ciclo(
                 usuario, conversacion, list(base), registry.herramientas_openai(), pendientes
             )
