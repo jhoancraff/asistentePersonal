@@ -1,0 +1,2 @@
+# Los hooks se ejecutan con sh: deben conservar saltos de línea LF también en Windows.
+.githooks/* text eol=lf
